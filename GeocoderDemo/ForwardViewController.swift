@@ -199,7 +199,7 @@ class ForwardViewController: UITableViewController, UITextFieldDelegate, CLLocat
             
             searchHintSwitch = UISwitch(frame: CGRectZero)
             self.searchHintSwitch!.sizeToFit()
-            self.searchHintSwitch!.addTarget(self, action: "hintSwitchChanged:", forControlEvents: .TouchUpInside)
+            self.searchHintSwitch!.addTarget(self, action: #selector(ForwardViewController.hintSwitchChanged(_:)), forControlEvents: .TouchUpInside)
             cell.accessoryView = self.searchHintSwitch
             
             cell.textLabel!.text = "Include Hint Region"

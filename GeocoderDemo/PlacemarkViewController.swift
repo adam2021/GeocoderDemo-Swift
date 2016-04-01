@@ -164,9 +164,10 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         return cell
     }
     
-    private func cellForAddressDictionaryIndex(var index: Int) -> UITableViewCell {
+    private func cellForAddressDictionaryIndex(_index: Int) -> UITableViewCell {
         let keys = AddressDictionaryKeys
         
+        var index = _index
         if index >= keys.count {
             index = keys.count - 1
         }
@@ -188,9 +189,10 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         return cell
     }
     
-    private func cellForLocationIndex(var index: Int) -> UITableViewCell {
+    private func cellForLocationIndex(_index: Int) -> UITableViewCell {
         let keys = LocationKeys
         
+        var index = _index
         if index >= keys.count {
             index = keys.count - 1
         }
@@ -233,9 +235,10 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         return cell
     }
     
-    private func cellForRegionIndex(var index: Int) -> UITableViewCell {
+    private func cellForRegionIndex(_index: Int) -> UITableViewCell {
         let keys = RegionKeys
         
+        var index = _index
         if index >= keys.count {
             index = keys.count - 1
         }
