@@ -35,13 +35,13 @@ class PlacemarksListViewController: UITableViewController {
         self.init(placemarks: [])
     }
     
-    override convenience init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override convenience init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.init(placemarks: [])
     }
     
     init(placemarks: [CLPlacemark]) {
         self.placemarks = placemarks
-        super.init(style: .Grouped)
+        super.init(style: .grouped)
     }
     
     
@@ -59,7 +59,7 @@ class PlacemarksListViewController: UITableViewController {
     
     //MARK: - UITableViewDataSource
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // return the number of rows in the section.
         if self.placemarks.isEmpty {
             return 1
@@ -68,10 +68,10 @@ class PlacemarksListViewController: UITableViewController {
         return self.placemarks.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var protoCell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var protoCell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier)
         if protoCell == nil {
-            protoCell = UITableViewCell(style: .Subtitle, reuseIdentifier: CellIdentifier)
+            protoCell = UITableViewCell(style: .subtitle, reuseIdentifier: CellIdentifier)
         }
         let cell = protoCell!
         
@@ -88,9 +88,9 @@ class PlacemarksListViewController: UITableViewController {
             postalAddress.state = placemark.administrativeArea ?? ""
             postalAddress.postalCode = placemark.postalCode ?? ""
             postalAddress.country = placemark.country ?? ""
-            postalAddress.ISOCountryCode = placemark.ISOcountryCode ?? ""
+            postalAddress.isoCountryCode = placemark.isoCountryCode ?? ""
             
-            let addressString = CNPostalAddressFormatter.stringFromPostalAddress(postalAddress, style: .MailingAddress)
+            let addressString = CNPostalAddressFormatter.string(from: postalAddress, style: .mailingAddress)
             
             let latitude = placemark.location?.coordinate.latitude ?? 0.0
             let longitude = placemark.location?.coordinate.longitude ?? 0.0
@@ -98,7 +98,7 @@ class PlacemarksListViewController: UITableViewController {
             
             // strip out any empty lines in the address
             var finalAttrString = ""
-            let arrSplit = addressString.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+            let arrSplit = addressString.components(separatedBy: CharacterSet.newlines)
             for subStr in arrSplit {
                 if !subStr.isEmpty {
                     if !finalAttrString.isEmpty {
@@ -108,17 +108,17 @@ class PlacemarksListViewController: UITableViewController {
                 }
             }
             
-            cell.textLabel!.lineBreakMode = .ByWordWrapping
+            cell.textLabel!.lineBreakMode = .byWordWrapping
             cell.textLabel!.numberOfLines = 0
-            cell.textLabel!.font = UIFont.systemFontOfSize(16.0)
+            cell.textLabel!.font = UIFont.systemFont(ofSize: 16.0)
             cell.textLabel!.text = finalAttrString
             
-            cell.detailTextLabel!.lineBreakMode = .ByWordWrapping
+            cell.detailTextLabel!.lineBreakMode = .byWordWrapping
             cell.detailTextLabel!.numberOfLines = 0
-            cell.detailTextLabel!.font = UIFont.boldSystemFontOfSize(16.0)
+            cell.detailTextLabel!.font = UIFont.boldSystemFont(ofSize: 16.0)
             cell.detailTextLabel!.text = coordString
             
-            cell.accessoryType = .DisclosureIndicator
+            cell.accessoryType = .disclosureIndicator
         }
         
         return cell
@@ -127,7 +127,7 @@ class PlacemarksListViewController: UITableViewController {
     
     //MARK: - UITableViewDelegate
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let placemark = self.placemarks[indexPath.row]
         let pvc = PlacemarkViewController(placemark: placemark)
         self.navigationController!.pushViewController(pvc, animated: true)

@@ -38,7 +38,7 @@ class DistanceViewController: UITableViewController {
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.reloadData()
     }
@@ -56,7 +56,7 @@ class DistanceViewController: UITableViewController {
         longitude = self.fromCoordinateSelector.selectedCoordinate.longitude
         let from = CLLocation(latitude: latitude, longitude: longitude)
         
-        let distance = to.distanceFromLocation(from)
+        let distance = to.distance(from: from)
         
         return distance
     }
@@ -64,25 +64,25 @@ class DistanceViewController: UITableViewController {
     
     //MARK: - UITableViewDataSource
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // return the number of sections
         return 2
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // return the number of rows in the section
         return 1
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell? = nil
         
         // to and from cells
         if indexPath.section == 0 || indexPath.section == 1 {
-            cell = tableView.dequeueReusableCellWithIdentifier("selectorCell")
+            cell = tableView.dequeueReusableCell(withIdentifier: "selectorCell")
             if cell == nil {
-                cell = UITableViewCell(style: .Subtitle, reuseIdentifier: "selectorCell")
-                cell!.accessoryType = .DisclosureIndicator
+                cell = UITableViewCell(style: .subtitle, reuseIdentifier: "selectorCell")
+                cell!.accessoryType = .disclosureIndicator
             }
             
             var selector: CoordinateSelectorTableViewController!
@@ -95,17 +95,17 @@ class DistanceViewController: UITableViewController {
                 break
             }
             
-            if selector.selectedType != .Undefined {
-                cell!.accessoryType = .DisclosureIndicator
-                cell!.textLabel!.lineBreakMode = .ByWordWrapping
+            if selector.selectedType != .undefined {
+                cell!.accessoryType = .disclosureIndicator
+                cell!.textLabel!.lineBreakMode = .byWordWrapping
                 cell!.textLabel!.numberOfLines = 0
-                cell!.textLabel!.font = UIFont.systemFontOfSize(16.0)
+                cell!.textLabel!.font = UIFont.systemFont(ofSize: 16.0)
                 cell!.textLabel!.text = selector.selectedName
                 
                 if CLLocationCoordinate2DIsValid(selector.selectedCoordinate) {
-                    cell!.detailTextLabel!.lineBreakMode = .ByWordWrapping
+                    cell!.detailTextLabel!.lineBreakMode = .byWordWrapping
                     cell!.detailTextLabel!.numberOfLines = 0
-                    cell!.detailTextLabel!.font = UIFont.boldSystemFontOfSize(16.0)
+                    cell!.detailTextLabel!.font = UIFont.boldSystemFont(ofSize: 16.0)
                     
                     cell!.detailTextLabel!.text = String(format: "φ:%.4F, λ:%.4F", selector.selectedCoordinate.latitude, selector.selectedCoordinate.longitude)
                 }
@@ -118,10 +118,10 @@ class DistanceViewController: UITableViewController {
         return cell!
     }
     
-    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == 1 {
-            if self.toCoordinateSelector.selectedType != .Undefined &&
-                self.fromCoordinateSelector.selectedType != .Undefined
+            if self.toCoordinateSelector.selectedType != .undefined &&
+                self.fromCoordinateSelector.selectedType != .undefined
             {
                 return String(format: "%.1f km\n(as the crow flies)", self.distanceBetweenCoordinates / 1000)
             } else {
@@ -134,8 +134,8 @@ class DistanceViewController: UITableViewController {
     
     //MARK: - UITableViewDelegate
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.cellForRowAtIndexPath(indexPath)?.selected = false
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.cellForRow(at: indexPath)?.isSelected = false
         
         if indexPath.section == 0 {
             self.navigationController!.pushViewController(self.toCoordinateSelector, animated: true)

@@ -69,7 +69,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
     
     init(placemark: CLPlacemark?) {
         self.placemark = placemark
-        super.init(style: .Grouped)
+        super.init(style: .grouped)
     }
     
     convenience override init(style: UITableViewStyle) {
@@ -80,7 +80,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         self.init(placemark: nil)
     }
     
-    override convenience init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override convenience init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.init(placemark: nil)
     }
     
@@ -90,26 +90,26 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         self.title = "CLPlacemark Details"
         
         // load our custom map cell from 'MapCell.xib' (connects our IBOutlet to that cell)
-        NSBundle.mainBundle().loadNibNamed("MapCell", owner: self, options: nil)
+        Bundle.main.loadNibNamed("MapCell", owner: self, options: nil)
     }
     
     
     //MARK: - UITableViewDataSource
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return PlacemarkViewControllerSections.count
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return PlacemarkViewControllerSections[section].count
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return PlacemarkViewControllerSections[section].title
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0: return self.cellForAddressDictionaryIndex(indexPath.row)
         case 1: return self.cellForRegionIndex(indexPath.row)
@@ -131,7 +131,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
     
     //MARK: - UITableViewDelegate
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let mapSection = 3
         if indexPath.section == mapSection {
             return 240.0 // map cell height
@@ -139,18 +139,18 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         return self.tableView.rowHeight
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // if it's the map url cell, open the location in Google maps
         //
         if indexPath.section == 4 { // map url is always last section
             let ll = String(format: "%f,%f",
                 self.placemark?.location?.coordinate.latitude ?? 0.0,
                 self.placemark?.location?.coordinate.longitude ?? 0.0)
-                .stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+                .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
             let url = "http://maps.apple.com/?q=\(ll)"
-            UIApplication.sharedApplication().openURL(NSURL(string: url)!)
+            UIApplication.shared.openURL(URL(string: url)!)
             
-            self.tableView.deselectRowAtIndexPath(indexPath, animated: false)
+            self.tableView.deselectRow(at: indexPath, animated: false)
         }
     }
     
@@ -159,12 +159,12 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
     
     private func blankCell() -> UITableViewCell {
         let cellID = "BlankCell"
-        let cell = UITableViewCell(style: .Value1, reuseIdentifier: cellID)
-        cell.selectionStyle = UITableViewCellSelectionStyle.None
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: cellID)
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
         return cell
     }
     
-    private func cellForAddressDictionaryIndex(_index: Int) -> UITableViewCell {
+    private func cellForAddressDictionaryIndex(_ _index: Int) -> UITableViewCell {
         let keys = AddressDictionaryKeys
         
         var index = _index
@@ -176,8 +176,8 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         
         // setup
         let key = keys[index]
-        let ivar = self.placemark?.valueForKey(key) as? String
-        if let dict = self.placemark?.addressDictionary?.filter({dictKey,_ in dictKey.description.lowercaseString == key.lowercaseString}).first?.1 as? String {
+        let ivar = self.placemark?.value(forKey: key) as? String
+        if let dict = self.placemark?.addressDictionary?.filter({dictKey,_ in dictKey.description.lowercased() == key.lowercased()}).first?.1 as? String {
             // assert that ivar and dict values are the same
             assert(ivar == dict, "value from ivar accessor and from addressDictionary should always be the same! \(ivar) != \(dict)")
         }
@@ -189,7 +189,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         return cell
     }
     
-    private func cellForLocationIndex(_index: Int) -> UITableViewCell {
+    private func cellForLocationIndex(_ _index: Int) -> UITableViewCell {
         let keys = LocationKeys
         
         var index = _index
@@ -235,7 +235,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         return cell
     }
     
-    private func cellForRegionIndex(_index: Int) -> UITableViewCell {
+    private func cellForRegionIndex(_ _index: Int) -> UITableViewCell {
         let keys = RegionKeys
         
         var index = _index
@@ -277,10 +277,10 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
     
     private func cellForMapURL() -> UITableViewCell {
         let cellID = "MapURLCell"
-        let cell = UITableViewCell(style: .Default, reuseIdentifier: cellID)
+        let cell = UITableViewCell(style: .default, reuseIdentifier: cellID)
         
         cell.textLabel!.text = "View in Maps"
-        cell.textLabel!.textAlignment = NSTextAlignment.Center
+        cell.textLabel!.textAlignment = NSTextAlignment.center
         
         return cell
     }
@@ -289,22 +289,22 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
     //MARK: - Display Utilities
     
     // performSelector is only for objects
-    private func doubleForObject(object: NSObject?, andKey key: String) -> Double {
+    private func doubleForObject(_ object: NSObject?, andKey key: String) -> Double {
         
-        let result = object?.valueForKey(key) as? Double ?? 0.0
+        let result = object?.value(forKey: key) as? Double ?? 0.0
         
         return result
     }
     
     // don't try and print any NaNs. these throw exceptions in strings
-    private func displayStringForDouble(aDouble: Double) -> String {
+    private func displayStringForDouble(_ aDouble: Double) -> String {
         if aDouble.isNaN {
             return "N/A"
         } else {
             return String(format: "%f", aDouble)
         }
     }
-    private func displayStringForDoubleWithInvalid(aDouble: Double) -> String {
+    private func displayStringForDoubleWithInvalid(_ aDouble: Double) -> String {
         if aDouble.isNaN {
             return "N/A"
         } else if aDouble < 0 {

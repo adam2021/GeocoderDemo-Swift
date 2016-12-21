@@ -19,9 +19,9 @@ import CoreLocation
 import Contacts
 
 enum CoordinateSelectorLastSelectedType: Int {
-    case Search = 1
-    case Current
-    case Undefined
+    case search = 1
+    case current
+    case undefined
 }
 
 // this class contains a list of names and associated Coordinates as well as allowing
@@ -32,14 +32,14 @@ enum CoordinateSelectorLastSelectedType: Int {
 class CoordinateSelectorTableViewController: UITableViewController, UITextFieldDelegate, CLLocationManagerDelegate {
     
     private(set) var selectedCoordinate: CLLocationCoordinate2D = CLLocationCoordinate2D()
-    private(set) var selectedType: CoordinateSelectorLastSelectedType = .Undefined
+    private(set) var selectedType: CoordinateSelectorLastSelectedType = .undefined
     private(set) var selectedName: String = ""
     
     private var searchPlacemarksCache: [CLPlacemark]?
     
     private var locationManager: CLLocationManager?
     
-    private var checkedIndexPath: NSIndexPath?
+    private var checkedIndexPath: IndexPath?
     
     @IBOutlet private weak var searchCell: UITableViewCell!
     @IBOutlet private weak var searchTextField: UITextField!
@@ -57,8 +57,8 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
     init() {
         // do some default variables setup
         selectedCoordinate = kCLLocationCoordinate2DInvalid
-        selectedType = .Undefined
-        super.init(style: .Grouped)
+        selectedType = .undefined
+        super.init(style: .grouped)
         self.updateSelectedName()
         self.updateSelectedCoordinate()
     }
@@ -77,28 +77,28 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         self.clearsSelectionOnViewWillAppear = false
         
         // load our custom table view cells from our nib
-        NSBundle.mainBundle().loadNibNamed("CoordinateSelectorTableViewCells", owner: self, options: nil)
+        Bundle.main.loadNibNamed("CoordinateSelectorTableViewCells", owner: self, options: nil)
         
         self.tableView.estimatedRowHeight = 44.0
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         self.updateSelectedCoordinate()
         
         // stop updating, we don't care no more…
-        if self.selectedType == .Current {
+        if self.selectedType == .current {
             self.stopUpdatingCurrentLocation()
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // start updating, we might care again
-        if self.selectedType == .Current {
+        if self.selectedType == .current {
             self.startUpdatingCurrentLocation()
         }
     }
@@ -106,7 +106,7 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
     
     //MARK: - Utilities
     
-    private func postalAddressFromPlacemark(placemark: CLPlacemark?) -> String {
+    private func postalAddressFromPlacemark(_ placemark: CLPlacemark?) -> String {
         // use the Contacts framework to create a readable formatter address
         let postalAddress = CNMutablePostalAddress()
         postalAddress.street = placemark?.thoroughfare ?? ""
@@ -114,20 +114,20 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         postalAddress.state = placemark?.administrativeArea ?? ""
         postalAddress.postalCode = placemark?.postalCode ?? ""
         postalAddress.country = placemark?.country ?? ""
-        postalAddress.ISOCountryCode = placemark?.ISOcountryCode ?? ""
+        postalAddress.isoCountryCode = placemark?.isoCountryCode ?? ""
         
-        return CNPostalAddressFormatter.stringFromPostalAddress(postalAddress, style: .MailingAddress)
+        return CNPostalAddressFormatter.string(from: postalAddress, style: .mailingAddress)
     }
     
     
     //MARK: - UITableViewDataSource
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // return the number of sections
         return 2
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         var title: String? = nil
         if section == 1 {
             title = "OR"
@@ -135,7 +135,7 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         return title
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // return the number of rows in the section
         if section == 0 {
             return 1 + (self.searchPlacemarksCache?.count ?? 0)
@@ -144,12 +144,12 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         }
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let CellIdentifier = "Cell"
         
-        var protoCell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier)
+        var protoCell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier)
         if protoCell == nil {
-            protoCell = UITableViewCell(style: .Subtitle, reuseIdentifier: CellIdentifier)
+            protoCell = UITableViewCell(style: .subtitle, reuseIdentifier: CellIdentifier)
         }
         var cell = protoCell!
         
@@ -160,11 +160,11 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
             //
             // load the custom cell from the Nib
             cell = currentLocationCell
-            cell.selectionStyle = .None
+            cell.selectionStyle = .none
             
             let status = CLLocationManager.authorizationStatus()
-            if status == .Denied ||
-                status == .Restricted
+            if status == .denied ||
+                status == .restricted
             {
                 currentLocationLabel.text = "Location Services Disabled"
             }
@@ -178,13 +178,13 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
             // otherwise display the list of results
             let placemark = self.searchPlacemarksCache?[indexPath.row - 1]
             
-            cell.textLabel!.lineBreakMode = .ByWordWrapping
+            cell.textLabel!.lineBreakMode = .byWordWrapping
             cell.textLabel!.numberOfLines = 0
-            cell.textLabel!.font = UIFont.systemFontOfSize(16.0)
+            cell.textLabel!.font = UIFont.systemFont(ofSize: 16.0)
             cell.textLabel!.text = self.postalAddressFromPlacemark(placemark)
             
-            cell.detailTextLabel!.lineBreakMode = .ByWordWrapping
-            cell.detailTextLabel!.font = UIFont.boldSystemFontOfSize(16.0)
+            cell.detailTextLabel!.lineBreakMode = .byWordWrapping
+            cell.detailTextLabel!.font = UIFont.boldSystemFont(ofSize: 16.0)
             let latitude = placemark?.location?.coordinate.latitude ?? 0.0
             let longitude = placemark?.location?.coordinate.longitude ?? 0.0
             cell.detailTextLabel!.text = String(format: "φ:%.4F, λ:%.4F", latitude, longitude)
@@ -192,9 +192,9 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         
         // show a check next to the selected option / cell
         if self.checkedIndexPath == indexPath {
-            cell.accessoryType = .Checkmark
+            cell.accessoryType = .checkmark
         } else {
-            cell.accessoryType = .None
+            cell.accessoryType = .none
         }
         
         return cell
@@ -203,29 +203,29 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
     
     //MARK: - Table view delegate
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // set the selected type
         let section = indexPath.section
         
         if section == 1 {
-            selectedType = .Current
+            selectedType = .current
         } else if section == 0 {
-            selectedType = .Search
+            selectedType = .search
         }
         
         // deselect the cell
-        self.tableView.cellForRowAtIndexPath(indexPath)?.selected = false
+        self.tableView.cellForRow(at: indexPath)?.isSelected = false
         
         // if this is the search cell itself do nothing
-        if selectedType == .Search && indexPath.row == 0 {
+        if selectedType == .search && indexPath.row == 0 {
             return
         }
         
         // if location services are restricted do nothing
-        if selectedType == .Current {
+        if selectedType == .current {
             let status = CLLocationManager.authorizationStatus()
-            if status == .Denied ||
-                status == .Restricted
+            if status == .denied ||
+                status == .restricted
             {
                 return
             }
@@ -236,9 +236,9 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         
         // move the checkmark from the previous to the new cell
         if checkedIndexPath != nil {
-            self.tableView.cellForRowAtIndexPath(self.checkedIndexPath!)?.accessoryType = .None
+            self.tableView.cellForRow(at: self.checkedIndexPath!)?.accessoryType = .none
         }
-        self.tableView.cellForRowAtIndexPath(indexPath)?.accessoryType = .Checkmark
+        self.tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         
         // set this row to be checked on next reload
         if self.checkedIndexPath != indexPath {
@@ -252,13 +252,13 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         self.updateSelectedCoordinate()
         
         // if current location has been selected, start updating current location
-        if selectedType == .Current {
+        if selectedType == .current {
             self.startUpdatingCurrentLocation()
         }
         
         // if regular or search, pop back to previous level
-        if selectedType == .Search {
-            self.navigationController!.popViewControllerAnimated(true)
+        if selectedType == .search {
+            self.navigationController!.popViewController(animated: true)
         }
     }
     
@@ -268,14 +268,14 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
     // keys off selectedType and selectedCoordinates
     private func updateSelectedName() {
         switch selectedType {
-        case .Current:
+        case .current:
             selectedName = "Current Location"
             
-        case .Search:
+        case .search:
             let placemark = self.searchPlacemarksCache?[selectedIndex - 1] // take into account the first 'search' cell
             selectedName = self.postalAddressFromPlacemark(placemark)
             
-        case .Undefined:
+        case .undefined:
             selectedName = "Select a Place"
         }
     }
@@ -283,16 +283,16 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
     // keys off selectedType and selectedCoordinates
     private func updateSelectedCoordinate() {
         switch selectedType {
-        case .Search:
+        case .search:
             // allow for the selection of search results,
             // take into account the first 'search' cell
             let placemark = self.searchPlacemarksCache?[selectedIndex - 1]
             selectedCoordinate = placemark?.location?.coordinate ?? kCLLocationCoordinate2DInvalid
             
-        case .Undefined:
+        case .undefined:
             selectedCoordinate = kCLLocationCoordinate2DInvalid
             
-        case .Current:
+        case .current:
             break // no need to update for current location (CL delegate callback sets it)
         }
     }
@@ -303,8 +303,8 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
     private func startUpdatingCurrentLocation() {
         // if location services are restricted do nothing
         let status = CLLocationManager.authorizationStatus()
-        if status == .Denied ||
-            status == .Restricted
+        if status == .denied ||
+            status == .restricted
         {
             return
         }
@@ -336,12 +336,17 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
     
     //MARK: - CLLocationManagerDelegate - Location updates
     
-    func locationManager(manager: CLLocationManager,
-        didUpdateToLocation newLocation: CLLocation,
-        fromLocation oldLocation: CLLocation)
-    {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//    func locationManager(_ manager: CLLocationManager,
+//        didUpdateToLocation newLocation: CLLocation,
+//        fromLocation oldLocation: CLLocation)
+//    {
+        guard !locations.isEmpty else {
+            return
+        }
+        let newLocation = locations[0]
         // if the location is older than 30s ignore
-        if abs(newLocation.timestamp.timeIntervalSinceDate(NSDate())) > 30 {
+        if abs(newLocation.timestamp.timeIntervalSince(Date())) > 30 {
             return
         }
         
@@ -354,46 +359,46 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         self.stopUpdatingCurrentLocation()
     }
     
-    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-        NSLog("%@", error)
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        NSLog(error.localizedDescription)
         
         // stop updating
         self.stopUpdatingCurrentLocation()
         
         // set selected location to invalid location
-        selectedType = .Undefined
+        selectedType = .undefined
         selectedCoordinate = kCLLocationCoordinate2DInvalid
         selectedName = "Select a Location"
         currentLocationLabel.text = "Error updating location"
         
         // remove the check from the current Location cell
-        currentLocationCell.accessoryType = .None
+        currentLocationCell.accessoryType = .none
         
         // show an alert
         let alertController =
         UIAlertController(title: "Error updating location",
             message: error.localizedDescription,
-            preferredStyle: .Alert)
+            preferredStyle: .alert)
         let ok =
         UIAlertAction(title: "OK",
-            style: .Default,
+            style: .default,
             handler: {action in
                 // do some thing here
         })
         alertController.addAction(ok)
-        self.presentViewController(alertController, animated: true, completion: nil)
+        self.present(alertController, animated: true, completion: nil)
     }
     
     // invoked when the authorization status changes for this application
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
     }
     
     
     //MARK: - placemarks search
     
-    private func lockSearch(lock: Bool) {
-        self.searchTextField.enabled = !lock
-        self.searchSpinner.hidden = !lock
+    private func lockSearch(_ lock: Bool) {
+        self.searchTextField.isEnabled = !lock
+        self.searchSpinner.isHidden = !lock
     }
     
     private func performPlacemarksSearch() {
@@ -408,14 +413,14 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
             // So we use a dispatch_async(dispatch_get_main_queue(),^{}) call to ensure that UI updates are always
             // performed from the main thread.
             //
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 if (self.checkedIndexPath?.section ?? 0) == 0 {
                     // clear any current selections if they are search result selections
                     self.checkedIndexPath = nil
                 }
                 
                 self.searchPlacemarksCache = placemarks; // might be nil
-                self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
+                self.tableView.reloadSections(IndexSet(integer: 0), with: .none)
                 self.lockSearch(false)
                 
                 if placemarks?.count ?? 0 == 0 {
@@ -423,15 +428,15 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
                     let alertController =
                     UIAlertController(title: "No places were found",
                         message: nil,
-                        preferredStyle: .Alert)
+                        preferredStyle: .alert)
                     let ok =
                     UIAlertAction(title: "OK",
-                        style: .Default,
+                        style: .default,
                         handler: {action in
                             // do some thing here
                     })
                     alertController.addAction(ok)
-                    self.presentViewController(alertController, animated: true, completion: nil)
+                    self.present(alertController, animated: true, completion: nil)
                 }
             }
         }
@@ -441,7 +446,7 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
     //MARK: - UITextFieldDelegate
     
     // dismiss the keyboard for the textfields
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.searchTextField.resignFirstResponder()
         
         // initiate a search
@@ -450,7 +455,7 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         return true
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         self.updateSelectedCoordinate()
     }
     
