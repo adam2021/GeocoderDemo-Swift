@@ -179,7 +179,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         let ivar = self.placemark?.value(forKey: key) as? String
         if let dict = self.placemark?.addressDictionary?.filter({dictKey,_ in dictKey.description.lowercased() == key.lowercased()}).first?.1 as? String {
             // assert that ivar and dict values are the same
-            assert(ivar == dict, "value from ivar accessor and from addressDictionary should always be the same! \(ivar) != \(dict)")
+            assert(ivar == dict, "value from ivar accessor and from addressDictionary should always be the same! \(ivar ?? "nil") != \(dict)")
         }
         
         // set cell attributes
