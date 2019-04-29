@@ -63,7 +63,7 @@ class ForwardViewController: UITableViewController, UITextFieldDelegate, CLLocat
         if currentLocationActivityIndicatorView == nil {
             // add the spinner to the table cell
             let curLocSpinner =
-            UIActivityIndicatorView(activityIndicatorStyle: .gray)
+            UIActivityIndicatorView(style: .gray)
             curLocSpinner.startAnimating()
             curLocSpinner.frame = CGRect(x: 200.0, y: 0.0, width: 22.0, height: 22.0)
             curLocSpinner.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin]
@@ -86,7 +86,7 @@ class ForwardViewController: UITableViewController, UITextFieldDelegate, CLLocat
             let containerView = UIView(frame:
                 CGRect(x: 0.0, y: 0.0, width: self.tableView.frame.width, height: 22.0))
             let spinner =
-            UIActivityIndicatorView(activityIndicatorStyle: .gray)
+            UIActivityIndicatorView(style: .gray)
             
             // size and center the spinner
             spinner.frame = CGRect.zero

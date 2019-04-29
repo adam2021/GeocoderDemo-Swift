@@ -80,7 +80,7 @@ class CoordinateSelectorTableViewController: UITableViewController, UITextFieldD
         Bundle.main.loadNibNamed("CoordinateSelectorTableViewCells", owner: self, options: nil)
         
         self.tableView.estimatedRowHeight = 44.0
-        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.rowHeight = UITableView.automaticDimension
     }
     
     override func viewWillDisappear(_ animated: Bool) {

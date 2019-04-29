@@ -27,7 +27,7 @@ class PlacemarksListViewController: UITableViewController {
     
     //MARK: -
     
-    override convenience init(style: UITableViewStyle) {
+    override convenience init(style: UITableView.Style) {
         self.init(placemarks: [])
     }
     
@@ -53,7 +53,7 @@ class PlacemarksListViewController: UITableViewController {
         self.title = "CLPlacemarks"
         
         self.tableView.estimatedRowHeight = 44.0
-        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.rowHeight = UITableView.automaticDimension
     }
     
     

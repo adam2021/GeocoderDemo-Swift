@@ -35,7 +35,7 @@ class DistanceViewController: UITableViewController {
         fromCoordinateSelector = CoordinateSelectorTableViewController()
         
         self.tableView.estimatedRowHeight = 44.0
-        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.rowHeight = UITableView.automaticDimension
     }
     
     override func viewWillAppear(_ animated: Bool) {

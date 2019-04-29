@@ -58,7 +58,7 @@ class ReverseViewController: UITableViewController, CLLocationManagerDelegate {
         if self.currentLocationActivityIndicatorView == nil {
             // add the spinner to the table cell
             let curLocSpinner =
-            UIActivityIndicatorView(activityIndicatorStyle: .gray)
+            UIActivityIndicatorView(style: .gray)
             curLocSpinner.startAnimating()
             curLocSpinner.frame = CGRect(x: 200.0, y: 0.0, width: 22.0, height: 22.0)
             curLocSpinner.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin]
@@ -79,7 +79,7 @@ class ReverseViewController: UITableViewController, CLLocationManagerDelegate {
             let containerView = UIView(frame:
                 CGRect(x: 0.0, y: 0.0, width: self.tableView.frame.width, height: 22.0))
             let spinner =
-            UIActivityIndicatorView(activityIndicatorStyle: .gray)
+            UIActivityIndicatorView(style: .gray)
             
             // size and center the spinner
             spinner.frame = CGRect.zero
@@ -175,7 +175,7 @@ class ReverseViewController: UITableViewController, CLLocationManagerDelegate {
         let CellID = (indexPath.section == 0) ? "SubtitleCell" : "DefaultCell"
         var protoCell = tableView.dequeueReusableCell(withIdentifier: CellID)
         if protoCell == nil {
-            let style: UITableViewCellStyle = (indexPath.section == 0) ? .subtitle : .default
+            let style: UITableViewCell.CellStyle = (indexPath.section == 0) ? .subtitle : .default
             protoCell = UITableViewCell(style: style, reuseIdentifier: CellID)
         }
         let cell = protoCell!
@@ -205,7 +205,7 @@ class ReverseViewController: UITableViewController, CLLocationManagerDelegate {
             }
             cell.selectionStyle = .none
             
-            let accessoryType: UITableViewCellAccessoryType =
+            let accessoryType: UITableViewCell.AccessoryType =
             (selectedRow == indexPath.row) ? .checkmark : .none
             cell.accessoryType = accessoryType
         } else {

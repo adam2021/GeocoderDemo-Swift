@@ -72,7 +72,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         super.init(style: .grouped)
     }
     
-    convenience override init(style: UITableViewStyle) {
+    convenience override init(style: UITableView.Style) {
         self.init(placemark: nil)
     }
     
@@ -116,7 +116,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         case 2: return self.cellForLocationIndex(indexPath.row)
         case 3:
             // point the map to our placemark
-            let region = MKCoordinateRegionMakeWithDistance(self.placemark?.location?.coordinate ?? CLLocationCoordinate2D(), 200, 200)
+            let region = MKCoordinateRegion(center: self.placemark?.location?.coordinate ?? CLLocationCoordinate2D(), latitudinalMeters: 200, longitudinalMeters: 200)
             self.mapCell.mapView.region = region
             
             // add a pin using self as the object implementing the MKAnnotation protocol
@@ -146,7 +146,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
             let ll = String(format: "%f,%f",
                 self.placemark?.location?.coordinate.latitude ?? 0.0,
                 self.placemark?.location?.coordinate.longitude ?? 0.0)
-                .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+                .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
             let url = "http://maps.apple.com/?q=\(ll)"
             UIApplication.shared.openURL(URL(string: url)!)
             
@@ -160,7 +160,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
     private func blankCell() -> UITableViewCell {
         let cellID = "BlankCell"
         let cell = UITableViewCell(style: .value1, reuseIdentifier: cellID)
-        cell.selectionStyle = UITableViewCellSelectionStyle.none
+        cell.selectionStyle = .none
         return cell
     }
     
@@ -280,7 +280,7 @@ class PlacemarkViewController: UITableViewController, MKAnnotation {
         let cell = UITableViewCell(style: .default, reuseIdentifier: cellID)
         
         cell.textLabel!.text = "View in Maps"
-        cell.textLabel!.textAlignment = NSTextAlignment.center
+        cell.textLabel!.textAlignment = .center
         
         return cell
     }
